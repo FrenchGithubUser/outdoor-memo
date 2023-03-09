@@ -32,7 +32,7 @@
 <script>
 import axios from 'axios'
 import { defineComponent } from 'vue'
-import FlashCard from './FlashCard.vue'
+import FlashCard from 'components/FlashCard.vue'
 
 export default defineComponent({
   name: 'EssentialLink',
