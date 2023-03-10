@@ -1,5 +1,6 @@
 <template>
   <div class="index">
+    <div class="title">Outdoor Memo</div>
     <FlashCards />
   </div>
 </template>
@@ -19,7 +20,13 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   height: 100vh;
+  .title {
+    font-size: 2em;
+    font-weight: bold;
+    color: $primary;
+    margin-bottom: 15px;
+    margin-top: 20px;
+  }
 }
 </style>

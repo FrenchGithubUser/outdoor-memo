@@ -1,5 +1,6 @@
 <template>
   <div class="flash-cards">
+    <CategorySelectors @selection-updated="categoriesUpdated" />
     <FlashCard :item="currentItem" v-if="currentItem.id" @next="next" />
     <div class="btns">
       <q-btn
@@ -25,13 +26,20 @@
 import axios from 'axios'
 import { defineComponent } from 'vue'
 import FlashCard from 'components/FlashCard.vue'
+import CategorySelectors from 'components/CategorySelectors.vue'
 
 export default defineComponent({
   name: 'FlashCards',
-  components: { FlashCard },
+  components: { FlashCard, CategorySelectors },
   props: {},
   data() {
-    return { items: [], itemsDone: [], currentItem: {} }
+    return {
+      items: [],
+      itemsDone: [],
+      currentItem: {},
+      apiBaseUrl:
+        'https://www.faune-france.org/index.php?m_id=1351&content=gallery_pictures&backlink=skip&frmPage=all&mp_item_per_page=16&mp_current_page=1&frmAuthor=0&frmSpecies=0&frmCanton=0',
+    }
   },
   created() {
     this.getData()
@@ -47,16 +55,23 @@ export default defineComponent({
       this.currentItem = this.itemsDone[0]
       this.itemsDone.shift()
     },
-    getData() {
+    categoriesUpdated(payload) {
+      console.log(payload)
+      this.getData(payload.species, payload.canton)
+    },
+    getData(species = '1', canton = '') {
       axios
         .get(
           'https://api.allorigins.win/get?url=' +
             encodeURIComponent(
-              'https://www.faune-france.org/index.php?m_id=1351&content=gallery_pictures&backlink=skip&sp_tg=1&frmPage=all&mp_item_per_page=1&mp_current_page=1&frmAuthor=0&frmSpecies=0&frmCanton=0&frmCantons='
+              this.apiBaseUrl + '&sp_tg=' + species + '&frmCantons=' + canton
             )
         )
         .then((data) => {
+          this.items = []
+          this.itemsDone = []
           this.items = JSON.parse(data.data.contents).data
+
           this.currentItem = this.items[0]
         })
     },

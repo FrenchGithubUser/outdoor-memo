@@ -16,7 +16,7 @@
     <q-input
       bg-color="blue-grey-1"
       v-model="input"
-      label="Espèce"
+      label="Nom"
       class="answer-input"
       @keyup.enter="checkAnswer"
       outlined
@@ -51,6 +51,7 @@ export default defineComponent({
   },
   methods: {
     checkAnswer() {
+      if (this.input === '') return
       let answer = this.input.toLowerCase()
       let responseFr = this.item.bird_name.toLowerCase()
       let responseLatin = this.item.latin_name.toLowerCase()
@@ -60,6 +61,18 @@ export default defineComponent({
         this.answerStatus = false
       }
       new Promise((r) => setTimeout(r, 800)).then(() => {
+        this.emitter.emit('newAnswer', {
+          status: this.answerStatus,
+          id: this.item.id,
+          date: new Date().toUTCString(),
+          latin_name: this.item.latin_name,
+          media: [
+            {
+              web_path: this.item.media[0].web_path,
+            },
+          ],
+        })
+        console.log(this.item)
         this.$emit('next')
       })
     },
@@ -69,6 +82,7 @@ export default defineComponent({
       console.log(newval.bird_name)
       console.log(newval.latin_name)
       this.answerStatus = null
+      this.input = ''
     },
   },
 })
