@@ -1,20 +1,12 @@
 <template>
   <div class="flash-cards">
-    <FlashCard :item="currentItem" v-if="currentItem.id" />
-    <q-input
-      bg-color="blue-grey-1"
-      v-model="input"
-      class="answer-input"
-      @keyup.enter="search"
-      outlined
-    >
-    </q-input>
-
+    <FlashCard :item="currentItem" v-if="currentItem.id" @next="next" />
     <div class="btns">
       <q-btn
         class="btn"
         label="Précédent"
         color="primary"
+        :disable="itemsDone.length === 0"
         no-caps
         @click="previous"
       />
@@ -39,15 +31,21 @@ export default defineComponent({
   components: { FlashCard },
   props: {},
   data() {
-    return { items: [], currentItem: {} }
+    return { items: [], itemsDone: [], currentItem: {} }
   },
   created() {
     this.getData()
   },
   methods: {
     next() {
-      this.currentItem = this.items[0]
+      this.itemsDone.unshift({ ...this.currentItem })
       this.items.shift()
+      this.currentItem = this.items[0]
+    },
+    previous() {
+      this.items.unshift({ ...this.currentItem })
+      this.currentItem = this.itemsDone[0]
+      this.itemsDone.shift()
     },
     getData() {
       axios
@@ -59,7 +57,7 @@ export default defineComponent({
         )
         .then((data) => {
           this.items = JSON.parse(data.data.contents).data
-          this.next()
+          this.currentItem = this.items[0]
         })
     },
   },
@@ -71,12 +69,12 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  .answer-input {
-    margin: 10px;
-  }
+
   .btns {
+    text-align: center;
+    margin-top: 15px;
     .btn {
-      margin: 5px;
+      margin: 10px;
     }
   }
 }
