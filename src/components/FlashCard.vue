@@ -11,6 +11,16 @@
           Mauvaise réponse !
           <div class="hint">(t'es nul !)</div>
         </div>
+        <div class="response">
+          <div>Nom : {{ item.bird_name }}</div>
+          <div>Nom latin : {{ item.latin_name }}</div>
+        </div>
+        <q-btn
+          label="Ok"
+          color="primary"
+          no-caps
+          @click="acknowledgeResponse"
+        />
       </div>
     </div>
     <q-input
@@ -48,6 +58,21 @@ export default defineComponent({
   },
   created() {},
   methods: {
+    acknowledgeResponse() {
+      this.emitter.emit('newAnswer', {
+        status: this.answerStatus,
+        id: this.item.id,
+        date: new Date().toUTCString(),
+        latin_name: this.item.latin_name,
+        media: [
+          {
+            web_path: this.item.media[0].web_path,
+          },
+        ],
+      })
+      console.log(this.item)
+      this.$emit('next')
+    },
     checkAnswer() {
       if (this.input === '') return
       let answer = this.input.toLowerCase()
@@ -58,21 +83,6 @@ export default defineComponent({
       } else {
         this.answerStatus = false
       }
-      new Promise((r) => setTimeout(r, 800)).then(() => {
-        this.emitter.emit('newAnswer', {
-          status: this.answerStatus,
-          id: this.item.id,
-          date: new Date().toUTCString(),
-          latin_name: this.item.latin_name,
-          media: [
-            {
-              web_path: this.item.media[0].web_path,
-            },
-          ],
-        })
-        console.log(this.item)
-        this.$emit('next')
-      })
     },
   },
   watch: {
@@ -113,11 +123,16 @@ export default defineComponent({
       .false {
         color: $negative;
         .hint {
-          font-size: medium;
+          font-size: 0.5em;
         }
       }
       .true {
         color: $positive;
+      }
+      .response {
+        margin: 15px 0px;
+        font-weight: normal;
+        font-size: 0.65em !important;
       }
     }
   }
