@@ -1,6 +1,9 @@
 <template>
   <div class="flash-cards">
-    <CategorySelectors @selection-updated="categoriesUpdated" />
+    <CategorySelectors
+      @selection-updated="categoriesUpdated"
+      :loading="loading"
+    />
     <FlashCard :item="currentItem" v-if="currentItem.id" @next="next" />
     <div class="btns">
       <q-btn
@@ -37,6 +40,7 @@ export default defineComponent({
       items: [],
       itemsDone: [],
       currentItem: {},
+      loading: true,
       apiBaseUrl:
         'https://www.faune-france.org/index.php?m_id=1351&content=gallery_pictures&backlink=skip&frmPage=all&mp_item_per_page=16&mp_current_page=1&frmAuthor=0&frmSpecies=0&frmCanton=0',
     }
@@ -60,6 +64,7 @@ export default defineComponent({
       this.getData(payload.species, payload.canton)
     },
     getData(species = '1', canton = '') {
+      this.loading = true
       axios
         .get(
           'https://api.allorigins.win/get?url=' +
@@ -68,11 +73,17 @@ export default defineComponent({
             )
         )
         .then((data) => {
-          this.items = []
-          this.itemsDone = []
-          this.items = JSON.parse(data.data.contents).data
+          console.log(data.data === '')
+          if (data.data === '') {
+            this.$q.notify('Aucune donnée, utilisation des données précédentes')
+          } else {
+            this.items = []
+            this.itemsDone = []
+            this.items = JSON.parse(data.data.contents).data
 
-          this.currentItem = this.items[0]
+            this.currentItem = this.items[0]
+          }
+          this.loading = false
         })
     },
   },

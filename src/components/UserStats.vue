@@ -32,7 +32,7 @@ export default defineComponent({
   props: {},
   data() {
     return {
-      popupOpened: true,
+      popupOpened: false,
       stats: {},
       doneToday: 0,
       correctToday: 0,

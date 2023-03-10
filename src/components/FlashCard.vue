@@ -46,9 +46,7 @@ export default defineComponent({
       answerStatus: null,
     }
   },
-  created() {
-    console.log(this.item)
-  },
+  created() {},
   methods: {
     checkAnswer() {
       if (this.input === '') return

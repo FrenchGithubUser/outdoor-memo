@@ -16,7 +16,13 @@
         class="selector"
       />
     </div>
-    <q-btn label="Chercher" color="primary" no-caps @click="selectionUpdated" />
+    <q-btn
+      label="Chercher"
+      color="primary"
+      :loading="loading"
+      no-caps
+      @click="selectionUpdated"
+    />
   </div>
 </template>
 
@@ -27,7 +33,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'CategorySelectors',
   components: {},
-  props: {},
+  props: { loading: { type: Boolean } },
   data() {
     return {
       species: [
